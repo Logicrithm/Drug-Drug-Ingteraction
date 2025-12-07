@@ -68,8 +68,8 @@ Save these in **requirements.txt**.
 
 ### 1️⃣ Clone the repository
 ```
-git clone https://github.com/Logicrithm/Drug-Drug-Interaction.git
-cd yourrepo
+git clone https://github.com/Logicrithm/Drug-Drug-Ingteraction.git
+cd Drug-Drug-Ingteraction
 ```
 
 ### 2️⃣ Create a virtual environment
