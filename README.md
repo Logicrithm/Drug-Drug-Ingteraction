@@ -68,7 +68,7 @@ Save these in **requirements.txt**.
 
 ### 1️⃣ Clone the repository
 ```
-git clone https://github.com/yourusername/yourrepo.git
+git clone https://github.com/Logicrithm/Drug-Drug-Interaction.git
 cd yourrepo
 ```
 
