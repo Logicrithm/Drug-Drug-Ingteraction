@@ -7,7 +7,7 @@ It uses:
 - XGBoost MultiOutputClassifier  
 - TwoSides multi-label dataset  
 - DrugName → DrugBank ID mapping  
-- Flask web interface  
+- Flask-based web interface  
 
 The app loads drug embeddings, combines them, runs the trained model, and displays side-effect probabilities with risk levels.
 
@@ -17,12 +17,12 @@ The app loads drug embeddings, combines them, runs the trained model, and displa
 
 - Enter two drug names  
 - Convert drug names → DrugBank IDs  
-- Fetch RDF2Vec embeddings  
-- Build 256-dim combined input vector  
+- Load RDF2Vec embeddings  
+- Build 256-dim combined vector  
 - Predict side-effect probabilities  
 - Display top 10 side effects  
-- Auto-label risk as High / Medium / Low  
-- Simple Flask UI  
+- Auto-classify risk: High / Medium / Low  
+- Clean and simple Flask UI  
 
 ---
 
@@ -32,7 +32,7 @@ The app loads drug embeddings, combines them, runs the trained model, and displa
 project/
 │── app.py
 │── requirements.txt
-│── final_xgb_model.pkl
+│── final_xgb_model.pkl   ← Download separately (see below)
 │── DrugNamee.csv
 │── TWO_SIDES_50000_multilabel_with_names.csv
 │── mock_rdf2vec_embeddings.csv
@@ -47,9 +47,28 @@ project/
 
 ---
 
+## 🔽 Download the Trained Model (Required)
+
+Because GitHub does not allow uploading files >25MB directly,  
+the trained model `final_xgb_model.pkl` is available in **GitHub Releases**.
+
+👉 **Download here:**  
+https://github.com/Logicrithm/Drug-Drug-Ingteraction
+/releases/latest
+
+After downloading, **place the file in the project root**, next to:
+
+```
+app.py  
+DrugNamee.csv  
+mock_rdf2vec_embeddings.csv  
+```
+
+---
+
 ## 📦 Requirements
 
-Minimal requirements:
+Minimal dependencies:
 
 ```
 Flask==3.0.3
@@ -60,7 +79,7 @@ scikit-learn==1.6.1
 xgboost==3.0.0
 ```
 
-Save these in **requirements.txt**.
+Save these into **requirements.txt**.
 
 ---
 
@@ -68,8 +87,10 @@ Save these in **requirements.txt**.
 
 ### 1️⃣ Clone the repository
 ```
-git clone https://github.com/Logicrithm/Drug-Drug-Ingteraction.git
+git clone https://github.com/Logicrithm/Drug-Drug-Ingteraction
+.git
 cd Drug-Drug-Ingteraction
+
 ```
 
 ### 2️⃣ Create a virtual environment
@@ -91,13 +112,15 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Run the Flask app
+### 4️⃣ Place the downloaded model file
+Put `final_xgb_model.pkl` next to `app.py`.
+
+### 5️⃣ Run the Flask app
 ```
 python app.py
 ```
 
-The app will run at:
-
+App runs at:  
 👉 **http://127.0.0.1:8000/**
 
 ---
@@ -105,24 +128,22 @@ The app will run at:
 ## 🧠 How The App Works
 
 ### ✔ Step 1 — User enters two drug names  
-Example: `"aspirin"` and `"warfarin"`
+Example: `"aspirin"` + `"warfarin"`
 
-### ✔ Step 2 — Convert names → DrugBank ID  
-Using the mapping file `DrugNamee.csv`.
+### ✔ Step 2 — Convert names → DrugBank IDs  
+Using mapping file: `DrugNamee.csv`
 
 ### ✔ Step 3 — Fetch embeddings  
-From `mock_rdf2vec_embeddings.csv`.
+Vectors loaded from: `mock_rdf2vec_embeddings.csv`
 
-### ✔ Step 4 — Combine vectors  
-```
-combined = concat(drug1_vector, drug2_vector)
-```
+### ✔ Step 4 — Combine embeddings  
+256-dim final vector (128 + 128)
 
-### ✔ Step 5 — Predict using trained model  
-The model outputs probabilities for all side effects.
+### ✔ Step 5 — Model prediction  
+XGBoost model predicts probabilities for **all** side effects.
 
 ### ✔ Step 6 — Display top 10  
-Sorted by probability along with risk levels.
+Sorted by probability + risk levels.
 
 ---
 
@@ -133,18 +154,19 @@ Sorted by probability along with risk levels.
 
 ---
 
-## 📁 Required Data Files
+## 📁 Required Files
 
 | File | Description |
 |------|-------------|
-| `final_xgb_model.pkl` | Trained XGBoost classifier |
-| `DrugNamee.csv` | Drug name to DrugBank ID mapping |
-| `TWO_SIDES_50000_multilabel_with_names.csv` | Needed to rebuild the list of side-effect labels |
+| `final_xgb_model.pkl` | Trained XGBoost model (download separately) |
+| `DrugNamee.csv` | Drug name → DrugBank ID mapping |
+| `TWO_SIDES_50000_multilabel_with_names.csv` | Rebuilds multi-label column list |
 | `mock_rdf2vec_embeddings.csv` | 128-dim embeddings for each drug |
+| `index.html` | Frontend UI |
 
 ---
 
-## 🧪 Example Prediction Output
+## 🧪 Example Prediction
 
 | Side Effect | Probability | Risk |
 |------------|-------------|------|
@@ -157,29 +179,26 @@ Sorted by probability along with risk levels.
 ## 🐞 Troubleshooting
 
 ### ❌ Drug not found  
-The drug name does not exist in `DrugNamee.csv`.  
-Try:  
-- lowercase  
-- removing spaces  
-- checking spelling  
+Drug name not present in `DrugNamee.csv`.  
+Try lowercase or check spelling.
 
-### ❌ KeyError (embedding not found)  
-The DrugBank ID for your drug is not in `mock_rdf2vec_embeddings.csv`.
+### ❌ Embedding not found  
+DrugBank ID missing in `mock_rdf2vec_embeddings.csv`.
 
 ---
 
 ## 🤝 Contributing
-Pull requests and suggestions are welcome.
+Pull requests are welcome!
 
 ---
 
 ## 📜 License
-MIT License (you can replace this with any license you prefer)
+MIT License
 
 ---
 
 ## 🙌 Acknowledgements
-- TwoSides dataset  
+- TwoSides Dataset  
 - RDF2Vec embedding methodology  
 - DrugBank mapping  
 - XGBoost MultiOutputClassifier  
